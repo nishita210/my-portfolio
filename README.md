@@ -23,8 +23,44 @@ drop it on Netlify, Vercel, GitHub Pages or any static host as-is. 6.7 MB.
 | `#personal` | 20 | photos and closing line reveal on entry |
 | `#contact` | 21 | — |
 
+Hovering either cliff in the opening chalks the other half of the answer onto
+it — *Designer / Traveller / Painter / Adventurer* on the left, the services on
+the right — the way frames 1a and 1b do. The panels are placed by mapping the
+film's own 1200x675 coordinates onto the screen, so they stay locked to the
+painted labels at any window size, and they retire once the cliffs start to
+slide apart. Both are real buttons, so keyboard focus reveals them too.
+
+A white disc follows the pointer in `mix-blend-mode: difference`, inverting
+whatever is under it. It is shared by every page through `cursor.js`, swells
+over anything clickable, and switches itself off on touch devices.
+
 The ride ends exactly as she reaches the rock, which is where the climb act
 picks her up.
+
+## Case studies
+
+`agri-tech`, `retrofit`, `healthcare`, `gas-station`, `aviation` and
+`tourism.html`, one per card, each with a back link and a link to the next.
+
+Their **copy is verbatim from the Figma file** — `canvas.fig` is zstd-compressed
+kiwi, and the text runs were read out of it — but their **layout is this
+site's, not Figma's**. The project frames were never exported, so the page
+designs and their inner imagery could not be recovered; only the image fills
+made it into the export, unnamed. Export those six frames as SVG the way
+`1a, 1b, 1-21` were exported and the pages can be rebuilt to match.
+
+`scripts/build_projects.py` holds all six pages' content and regenerates them.
+
+## Deploying
+
+`.github/workflows/deploy.yml` publishes `site/` on every push to `main`.
+
+Pages has to be switched on once by hand — **Settings → Pages → Source →
+"GitHub Actions"**. The Actions token is not permitted to create the Pages
+site itself, so `configure-pages` fails until that is done.
+
+Every path in the site is relative, so it serves correctly from the
+`/my-portfolio/` subpath without any base-path configuration.
 
 ## Where things come from
 
