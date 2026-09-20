@@ -24,7 +24,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # enablement turns Pages on for the repo, so no manual settings step
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       # The site is plain static files; `site/` is the web root as-is.
       - uses: actions/upload-pages-artifact@v3
