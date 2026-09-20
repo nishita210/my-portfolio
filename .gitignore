@@ -1,0 +1,22 @@
+# Intermediate frame dumps — regenerate with the scripts, don't version them.
+scripts/vidframes/
+scripts/clean/
+scripts/v3/
+scripts/v3clean/
+scripts/embedded/
+
+# Contact sheets and other throwaway inspection renders.
+scripts/contact*.png
+scripts/rgb_*.png
+scripts/alpha_sheet.png
+scripts/assets_sheet.png
+scripts/poses.png
+scripts/grid.png
+scripts/surf_check.png
+scripts/cliff_*.png
+scripts/climb_check.png
+scripts/v3_*.png
+scripts/wm.png
+scripts/*.txt
+
+.DS_Store
