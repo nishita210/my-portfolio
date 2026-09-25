@@ -33,9 +33,13 @@ off that same scroll position:
 
 Personal and contact follow in ordinary flow once the film is done.
 
-Hovering the surfer on the opening cliff makes her react: she is drawn twice,
-once in the film and once as a cut-out (`assets/hero-figure.webp`) sitting
-exactly on top of it, so she can move without the scene moving with her.
+The page opens on `assets/opening.webp` — storyboard frame 2, the only framing
+with both cliffs and her standing — and dissolves into the film on the first
+stretch of scroll, walking the still onto the film's framing as it goes.
+
+Hovering the surfer makes her react: she is drawn twice, once in the opening
+frame and once as a cut-out (`assets/hero-figure.webp`) sitting exactly on top
+of it, so she can move without the scene moving with her.
 
 ## Case studies
 
@@ -82,7 +86,10 @@ Every path in the site is relative, so it serves correctly from the
   stretch with neither cliff in frame — the camera hands off directly from one
   to the other — so the ride is timed to keep it to a sliver at the right rather
   than out of shot entirely.
-- **The opening shows one cliff, not two.** The take starts tight on the left
-  cliff; the right one only enters at frame 37, by which point she has already
-  jumped. Both cliffs cannot be in the first still without footage that holds
-  them together, or a composited opening frame.
+- **The opening is a still, not the film.** The take starts tight on the left
+  cliff — the right one only enters at frame 37, by which point she has already
+  jumped — so the page opens on storyboard frame 2, which holds both cliffs
+  together, and dissolves into the film over the first 360px of scroll. The two
+  are different drawings of the same scene, so the crossover is registered on
+  shared landmarks (the left cliff's top corner and the waterline below it) but
+  cannot overlap exactly.

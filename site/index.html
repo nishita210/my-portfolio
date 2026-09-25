@@ -30,8 +30,14 @@
   <section id="story" aria-label="Introduction">
     <div class="stage">
       <canvas id="film" width="1200" height="675" aria-hidden="true"></canvas>
+      <!-- The storyboard's opening frame, which holds both cliffs together.
+           The take itself starts tighter, so the page opens on this and
+           dissolves into the film on the first stretch of scroll. -->
+      <img class="opening" id="opening" src="assets/opening.webp"
+           alt="A surfer stands with her board on a cliff marked What I am, facing a second cliff marked What I offer across the water"
+           width="1440" height="1024">
       <img class="hero-figure" id="heroFigure" src="assets/hero-figure.webp"
-           alt="" width="185" height="158" aria-hidden="true">
+           alt="" width="193" height="141" aria-hidden="true">
       <button class="hero-poke" id="heroPoke" type="button" aria-label="Say hello to the surfer"></button>
       <p class="film-loading" id="filmLoading">Waxing the board…</p>
 

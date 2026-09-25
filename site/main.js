@@ -33,7 +33,16 @@ const ACTS = {
   skills:   [0.745, 0.885],
   services: [0.915, 1.000],
 };
-const FIGURE_UNTIL = 0.05;    // past this she has moved and the cut-out lies
+const OPENING_OUT = [0.008, 0.040];   // the still dissolves into the film here
+
+/* The still is a wider framing than the take. These are the same two points
+   in both — the left cliff's top corner, and the waterline below it — so the
+   still can be walked onto the film's framing as it fades, instead of the two
+   ghosting against each other. */
+const LAND = {
+  still: { w: 1440, h: 1024, x: 0.2583, top: 0.3955, water: 0.8203 },
+  film:  { x: 0.2289, top: 0.3806, water: 0.8194 },
+};
 
 /** Scroll position -> frame, through the cue points above. */
 function frameAt(p) {
@@ -104,13 +113,13 @@ function filmstrip(canvas, count, url, onReady) {
   return { seek: (frame) => draw(Math.round(frame) - 1) };
 }
 
-/** Where a point in the film's own frame lands on screen, under object-fit. */
-function filmToScreen(canvas) {
-  const box = canvas.getBoundingClientRect();
-  const cs = getComputedStyle(canvas);
+/** Where a point in a media element's own frame lands on screen. */
+function mediaToScreen(el, nw, nh) {
+  const box = el.getBoundingClientRect();
+  const cs = getComputedStyle(el);
   const pick = cs.objectFit === "contain" ? Math.min : Math.max;
-  const s = pick(box.width / canvas.width, box.height / canvas.height);
-  const spare = { x: box.width - canvas.width * s, y: box.height - canvas.height * s };
+  const s = pick(box.width / nw, box.height / nh);
+  const spare = { x: box.width - nw * s, y: box.height - nh * s };
   // object-position: keywords and percentages both, x then y.
   const WORDS = { left: 0, top: 0, center: 0.5, right: 1, bottom: 1 };
   const parts = cs.objectPosition.split(/\s+/);
@@ -144,22 +153,51 @@ function startStory() {
   const offers = [...document.querySelectorAll(".services li")];
   const figure = document.getElementById("heroFigure");
   const poke = document.getElementById("heroPoke");
+  const opening = document.getElementById("opening");
 
-  // The cut-out sits exactly where she is drawn in frame one.
-  const FIG = { x: 0.1375, y: 0.1556, w: 0.1445, h: 0.2194 };
+  // The cut-out sits exactly where she is drawn on the opening frame.
+  const OPEN_W = LAND.still.w;
+  const OPEN_H = LAND.still.h;
+  const FIG = { x: 0.1368, y: 0.2559, w: 0.1340, h: 0.1377 };
+
+  /* Where the still has to end up for its scene to sit on the film's. */
+  let fit = { k: 1, tx: 0, ty: 0 };
+  function measureFit() {
+    if (!opening) return;
+    const mo = mediaToScreen(opening, OPEN_W, OPEN_H);
+    const mf = mediaToScreen(canvas, canvas.width, canvas.height);
+    const sx = mo.left + LAND.still.x * OPEN_W * mo.s;
+    const sy = mo.top + LAND.still.top * OPEN_H * mo.s;
+    const sw = mo.top + LAND.still.water * OPEN_H * mo.s;
+    const fx = mf.left + LAND.film.x * canvas.width * mf.s;
+    const fy = mf.top + LAND.film.top * canvas.height * mf.s;
+    const fw = mf.top + LAND.film.water * canvas.height * mf.s;
+    const span = sw - sy;
+    const k = Math.abs(span) < 1 ? 1 : (fw - fy) / span;
+    const box = opening.getBoundingClientRect();
+    fit = {
+      k,
+      tx: fx - box.left - (sx - box.left) * k,
+      ty: fy - box.top - (sy - box.top) * k,
+    };
+  }
 
   function placeFigure() {
-    if (!figure) return;
-    const m = filmToScreen(canvas);
-    figure.style.left = `${m.left + FIG.x * canvas.width * m.s}px`;
-    figure.style.top = `${m.top + FIG.y * canvas.height * m.s}px`;
-    figure.style.width = `${FIG.w * canvas.width * m.s}px`;
+    if (!figure || !opening) return;
+    const m = mediaToScreen(opening, OPEN_W, OPEN_H);
+    const x = m.left + FIG.x * OPEN_W * m.s;
+    const y = m.top + FIG.y * OPEN_H * m.s;
+    const w = FIG.w * OPEN_W * m.s;
+    const h = FIG.h * OPEN_H * m.s;
+    figure.style.left = `${x}px`;
+    figure.style.top = `${y}px`;
+    figure.style.width = `${w}px`;
     if (poke) {
       const pad = 14;
-      poke.style.left = `${m.left + FIG.x * canvas.width * m.s - pad}px`;
-      poke.style.top = `${m.top + FIG.y * canvas.height * m.s - pad}px`;
-      poke.style.width = `${FIG.w * canvas.width * m.s + pad * 2}px`;
-      poke.style.height = `${FIG.h * canvas.height * m.s + pad * 2}px`;
+      poke.style.left = `${x - pad}px`;
+      poke.style.top = `${y - pad}px`;
+      poke.style.width = `${w + pad * 2}px`;
+      poke.style.height = `${h + pad * 2}px`;
     }
   }
 
@@ -176,9 +214,11 @@ function startStory() {
   }
 
   placeFigure();
-  addEventListener("resize", placeFigure);
+  measureFit();
+  addEventListener("resize", () => { measureFit(); placeFigure(); });
 
   if (REDUCED) {
+    if (opening) opening.style.display = "none";
     acts.forEach((a) => a.classList.add("on"));
     cards.forEach((c) => c.classList.add("on"));
     steps.forEach((s) => s.classList.add("in"));
@@ -212,12 +252,22 @@ function startStory() {
     cascade(steps, within(p, ACTS.skills), 0.12, 0.7);
     cascade(offers, within(p, ACTS.services), 0.05, 0.62);
 
-    // The cut-out only tells the truth while she is standing still.
+    // Dissolve the wide opening into the take, pushing in as it goes so the
+    // change of framing reads as a camera move rather than a cut.
+    const out = within(p, OPENING_OUT);
+    if (opening) {
+      const t = ease(out);
+      const k = 1 + (fit.k - 1) * t;
+      opening.style.opacity = (1 - t).toFixed(3);
+      opening.style.transform =
+        `translate(${(fit.tx * t).toFixed(2)}px, ${(fit.ty * t).toFixed(2)}px) scale(${k.toFixed(4)})`;
+      opening.style.visibility = out >= 1 ? "hidden" : "visible";
+    }
+    // She belongs to the opening frame, and goes before it has moved far.
     if (figure) {
-      const still = p < FIGURE_UNTIL;
-      figure.classList.toggle("gone", !still);
-      if (poke) poke.hidden = !still;
-      if (still) placeFigure();
+      figure.style.opacity = (1 - ease(clamp01(out * 2.6))).toFixed(3);
+      if (poke) poke.hidden = out > 0.12;
+      if (out < 0.5) placeFigure();
     }
   };
 }
