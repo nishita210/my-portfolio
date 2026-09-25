@@ -1,28 +1,29 @@
-# Intermediate frame dumps — regenerate with the scripts, don't version them.
-scripts/vidframes/
-scripts/clean/
-scripts/v3/
-scripts/v3clean/
-scripts/embedded/
 
 # Contact sheets and other throwaway inspection renders.
-scripts/contact*.png
-scripts/rgb_*.png
+# Intermediate frame dumps — regenerate with the scripts, don't version them.
+.DS_Store
+scripts/*.txt
 scripts/alpha_sheet.png
 scripts/assets_sheet.png
-scripts/poses.png
-scripts/grid.png
-scripts/surf_check.png
+scripts/clean/
 scripts/cliff_*.png
 scripts/climb_check.png
+scripts/contact*.png
+scripts/embedded/
+scripts/fig_check.png
+scripts/grid.png
+scripts/join_check.png
+scripts/poses.png
+scripts/rgb_*.png
+scripts/sheet_*.png
+scripts/surf_check.png
+scripts/v3/
 scripts/v3_*.png
-scripts/wm.png
-scripts/*.txt
-
-.DS_Store
+scripts/v3_tail.png
+scripts/v3clean/
 scripts/v4/
 scripts/v5/
-scripts/v5clean/
-scripts/sheet_*.png
-scripts/fig_check.png
 scripts/v5_wm.png
+scripts/v5clean/
+scripts/vidframes/
+scripts/wm.png
