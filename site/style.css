@@ -1,11 +1,12 @@
-/* Nishita Gupta — portfolio. Hand-drawn storyboard, scroll as the timeline. */
+/* Nishita Gupta — portfolio.
+   One hand-drawn take runs the length of the page; the words are laid over it.
+   The film only ever scrubs — everything that animates is text. */
 
 :root {
   --paper:   #faf2e2;
   --ink:     #2b2722;
   --ink-soft:#5d564c;
   --orange:  #e8622a;
-  --sea:     #2e7fb8;
   --rule:    #ddd2bb;
 
   --gutter: clamp(20px, 5vw, 96px);
@@ -29,29 +30,16 @@ body {
 }
 
 img { max-width: 100%; height: auto; display: block; }
-
 h1, h2, h3 { margin: 0; line-height: 1.08; text-wrap: balance; }
-
-.display {
-  font: 400 clamp(38px, 6vw, 86px)/0.94 var(--display);
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-}
-.display span {
-  display: block;
-  font: 500 clamp(18px, 2.2vw, 32px)/1.2 var(--body);
-  letter-spacing: 0.02em;
-  margin-top: 0.35em;
-}
-.display.center { text-align: center; }
-
 a { color: inherit; }
 
-:where(a, .btn):focus-visible {
+:where(a, .btn, button):focus-visible {
   outline: 3px solid var(--orange);
   outline-offset: 3px;
   border-radius: 2px;
 }
+
+.anchor { position: relative; top: -80px; }
 
 /* ---------- the cursor --------------------------------------------- */
 /* A white disc in difference blend: whatever it passes over reads inverted
@@ -76,52 +64,10 @@ a { color: inherit; }
 .cursor.live { opacity: 1; }
 .cursor.big { width: 62px; height: 62px; margin: -31px 0 0 -31px; }
 
-/* Only take over the pointer where there is a real one to take over. */
 @media (hover: hover) and (pointer: fine) {
-  html.has-cursor,
-  html.has-cursor * { cursor: none; }
+  html.has-cursor, html.has-cursor * { cursor: none; }
 }
 @media (hover: none), (pointer: coarse) { .cursor { display: none; } }
-
-/* ---------- the cliffs answer back --------------------------------- */
-.cliffs {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  opacity: 0;
-  transition: opacity .3s;
-}
-.cliffs.reachable { opacity: 1; }
-.cliffs:not(.reachable) { pointer-events: none; }
-
-.cliff-zone {
-  position: absolute;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  appearance: none;
-}
-.cliff-zone:focus-visible { outline: 3px solid var(--orange); outline-offset: -4px; }
-
-.cliff-reveal {
-  --rock: #2f2c26;
-  position: absolute;
-  display: grid;
-  align-content: center;
-  gap: 0.1em;
-  padding: 0 0.3em;
-  color: #fdfbf4;
-  font: 600 clamp(15px, 1.55vw, 27px)/1.34 var(--hand);
-  background: var(--rock);
-  /* the glow melts the panel's edges into the rock behind it */
-  box-shadow: 0 0 26px 24px var(--rock);
-  opacity: 0;
-  transform: translateY(5px);
-  transition: opacity .28s ease, transform .28s ease;
-  pointer-events: none;
-}
-.cliff-reveal.show { opacity: 1; transform: none; }
 
 /* ---------- nav ---------------------------------------------------- */
 .nav {
@@ -144,15 +90,13 @@ a { color: inherit; }
 }
 .nav nav a:hover { border-bottom-color: var(--ink); }
 
-/* ---------- act I: the scrubbed leap -------------------------------- */
-#hero { height: 560vh; }
+/* ---------- the film ------------------------------------------------ */
+#story { height: 1100svh; }
 
-.hero-pin {
+.stage {
   position: sticky;
   top: 0;
   height: 100svh;
-  display: grid;
-  place-items: center;
   overflow: hidden;
 }
 #film {
@@ -164,127 +108,108 @@ a { color: inherit; }
 }
 .film-loading {
   position: absolute;
-  bottom: 8vh;
+  left: 50%;
+  bottom: 7vh;
+  transform: translateX(-50%);
   font: 400 18px/1 var(--hand);
   color: var(--ink-soft);
   transition: opacity .4s;
 }
 .film-loading[hidden] { display: block; opacity: 0; pointer-events: none; }
 
-.beats { position: relative; width: min(var(--wide), 90vw); height: 100%; }
-.beat {
+/* She is drawn twice: once in the film, once as this cut-out sitting exactly
+   on top of it, so she can react without the scene moving. */
+.hero-figure {
   position: absolute;
-  inset: 0;
-  display: grid;
-  align-content: start;
-  padding-top: clamp(80px, 17vh, 190px);
-  justify-items: center;
-  text-align: center;
-  gap: 6px;
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity .45s ease, transform .45s ease;
+  transform-origin: 50% 100%;
+  transition: transform .45s cubic-bezier(.34, 1.56, .64, 1), opacity .3s;
   pointer-events: none;
 }
-.beat.on { opacity: 1; transform: none; }
-.beat h1 { font: 400 clamp(32px, 5vw, 72px)/0.98 var(--display); text-transform: uppercase; }
-.beat p  { margin: 0; font-size: clamp(15px, 1.6vw, 21px); letter-spacing: 0.04em; }
+.hero-figure.gone { opacity: 0; }
+.hero-figure.poked { animation: poke 1.1s ease-in-out; }
+@keyframes poke {
+  0%   { transform: rotate(0) translateY(0); }
+  18%  { transform: rotate(-7deg) translateY(-11px); }
+  38%  { transform: rotate(5deg) translateY(0); }
+  58%  { transform: rotate(-4deg) translateY(-6px); }
+  78%  { transform: rotate(2deg) translateY(0); }
+  100% { transform: rotate(0) translateY(0); }
+}
+.hero-poke { position: absolute; margin: 0; padding: 0; border: 0; background: none; }
+.hero-poke[hidden] { display: none; }
+
+/* ---------- the captions -------------------------------------------- */
+.acts { position: absolute; inset: 0; pointer-events: none; }
+
+.act {
+  position: absolute;
+  inset: 0;
+  padding: clamp(84px, 12vh, 124px) var(--gutter) 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .45s ease;
+}
+.act.on { opacity: 1; visibility: visible; }
+.act.on :where(a, button) { pointer-events: auto; }
+
+/* Headings hold still — they fade in where they belong and stay put. */
+.act-title { max-width: var(--wide); margin-inline: auto; }
+.act-title span {
+  display: block;
+  font: 400 clamp(13px, 1.25vw, 18px)/1.3 var(--body);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.act-title b {
+  display: block;
+  font: 400 clamp(26px, 3.1vw, 44px)/1 var(--display);
+  text-transform: uppercase;
+  margin-top: 0.12em;
+}
+
 .hint {
-  margin-top: 1.4em;
-  font: 400 21px/1 var(--hand);
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  transform: translateX(-50%);
+  font: 400 clamp(19px, 1.9vw, 26px)/1 var(--hand);
   color: var(--ink-soft);
   animation: bob 2.4s ease-in-out infinite;
 }
-@keyframes bob { 50% { transform: translateY(7px); } }
+@keyframes bob { 50% { transform: translateX(-50%) translateY(7px); } }
 
-.chalk-head {
-  font: 400 clamp(26px, 3.4vw, 48px)/1 var(--display);
-  text-transform: uppercase;
-  margin-bottom: 0.4em;
-}
-.chalk { list-style: none; margin: 0; padding: 0; }
-.chalk li { font: 600 clamp(24px, 3.2vw, 44px)/1.35 var(--hand); }
+/* ---------- the work, one card at a time ----------------------------- */
+.cards { list-style: none; margin: 0; padding: 0; }
 
-/* ---------- act II: the ride, and the work passing by ---------------- */
-section { position: relative; }
-
-/* The act is one pinned frame. Scrolling rides the surf film forward and
-   pulls the work past her, right to left, the way she is travelling. */
-#projects { height: 540svh; }
-
-.proj-pin {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  overflow: hidden;
-}
-
-/* The ride hangs below the fold: the film's bottom is only open water, and
-   dropping it puts the surfer low enough for the work to pass above her. */
-#surf {
+.card {
   position: absolute;
-  inset: auto 0 -14vh 0;
-  width: 100%;
-  height: 78svh;
-  object-fit: cover;
-  object-position: bottom;
-}
-
-/* The skills act scrolls its heading with the page; the ride pins its own. */
-.act-head {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  padding: clamp(74px, 11vh, 132px) var(--gutter) clamp(20px, 3vh, 38px);
-  pointer-events: none;
-  background: linear-gradient(var(--paper) 88%, transparent);
-}
-#projects .act-head {
-  position: absolute;
-  inset: 0 auto auto 0;
-  z-index: 3;
-  padding: clamp(66px, 9vh, 92px) var(--gutter) 0;
-  background: none;
-}
-#projects .display { font-size: clamp(26px, 3.2vw, 46px); }
-#projects .display span { font-size: clamp(14px, 1.3vw, 19px); margin-top: 0.25em; }
-
-.track {
-  position: absolute;
-  top: clamp(165px, 21vh, 200px);
-  left: 0;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: clamp(46px, 7vw, 120px);
-  height: clamp(250px, 33vh, 310px);
-  margin: 0;
-  /* symmetric lead-in and run-out, so the first and last card each come to
-     rest in the middle of the frame */
-  padding-inline: calc((100vw - min(72vw, 820px)) / 2);
-  list-style: none;
-  will-change: transform;
-}
-
-.project {
-  flex: 0 0 min(72vw, 820px);
+  left: var(--gutter);
+  right: var(--gutter);
+  top: clamp(140px, 20vh, 200px);
+  max-width: min(var(--wide), 1010px);
+  margin-inline: auto;
   display: grid;
-  grid-template-columns: minmax(165px, 4fr) 7fr;
-  gap: clamp(20px, 3vw, 48px);
-  align-items: center;
+  grid-template-columns: minmax(150px, 4fr) 7fr;
+  gap: clamp(20px, 3.5vw, 56px);
+  align-items: start;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .4s ease;
 }
-.project h3 { font-size: clamp(24px, 2.8vw, 40px); font-weight: 500; }
-.project h3::after {
+.card.on { opacity: 1; visibility: visible; }
+
+.card h3 { font-size: clamp(21px, 2.4vw, 34px); font-weight: 500; }
+.card h3::after {
   content: "";
   display: block;
   height: 1.5px;
   background: var(--ink);
   margin: 8px 0 12px;
 }
-.meta { margin: 0; color: var(--ink-soft); }
-.project img {
-  max-height: clamp(180px, 30vh, 280px);
+.meta { margin: 0; color: var(--ink-soft); font-size: 0.95em; }
+.card img {
   width: 100%;
+  max-height: min(37vh, 330px);
   object-fit: cover;
   border-radius: 2px;
   box-shadow: 0 18px 40px -28px #4a3b2a;
@@ -292,11 +217,11 @@ section { position: relative; }
 
 .btn {
   display: inline-block;
-  margin-top: 22px;
-  padding: 11px 20px;
+  margin-top: 20px;
+  padding: 10px 19px;
   background: var(--ink);
   color: var(--paper);
-  font-size: 13px;
+  font-size: 12.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
@@ -304,108 +229,49 @@ section { position: relative; }
 }
 .btn:hover { background: var(--orange); }
 
-/* ---------- act III: the climb --------------------------------------- */
-#skills { padding-bottom: clamp(60px, 12vh, 140px); }
-
-.climb {
-  position: relative;
-  max-width: var(--wide);
-  margin-inline: auto;
-  padding: calc(var(--head, 220px) + 16px) var(--gutter) 0;
-  /* the rock is pinned to the viewport edge, so just reserve room for it */
-  padding-right: max(var(--gutter), min(34vw, 430px));
-}
-.timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(14px, 2.4vh, 30px); }
-.timeline li { display: grid; grid-template-columns: 6.2em 1fr; gap: 14px; align-items: baseline; }
-.timeline .yr { text-align: right; font-weight: 500; font-size: clamp(16px, 1.5vw, 21px); white-space: nowrap; }
-.timeline .what b { display: block; font-weight: 500; font-size: clamp(15px, 1.4vw, 20px); }
-.timeline .what i { font-style: normal; color: var(--ink-soft); font-size: 0.92em; }
-
-.ropes {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-.ropes path { fill: none; stroke: var(--ink); stroke-width: 1.4; }
-.ropes circle { fill: var(--ink); }
-
-/* A pinned backdrop: the rock holds the right of the frame while the
-   timeline scrolls past it, exactly as it does in the storyboard. The
-   wrapper bounds the sticky travel to this act and nothing beyond it. */
-.rockface-wrap {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-.rockface {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  width: min(38vw, 520px);
-  margin-left: auto;
-}
-.rockface img { max-width: none; }
-.rockface .cliff {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;
-}
-.rockface .label {
-  position: absolute;
-  right: 9%;
-  top: 34%;
-  width: clamp(96px, 11vw, 170px);
-  z-index: 1;
-}
-.rockface .climber {
-  position: absolute;
-  right: 56%;
-  top: 30%;
-  width: clamp(84px, 9vw, 145px);
-}
-
-/* ---------- act IV: what I offer -------------------------------------- */
-#services { padding: clamp(60px, 14vh, 170px) 0 0; }
-
-.gorge {
-  position: relative;
-  min-height: min(82vh, 680px);
+/* ---------- the climb ------------------------------------------------ */
+.timeline {
+  list-style: none;
+  margin: clamp(22px, 4vh, 44px) 0 0;
+  padding: 0;
+  max-width: min(54%, 620px);
   display: grid;
-  place-items: center;
-  overflow: hidden;
+  gap: clamp(8px, 1.5vh, 18px);
 }
-.gorge .cliff {
-  position: absolute;
-  bottom: 0;
-  height: 66%;
-  width: min(26vw, 330px);
-  max-width: none;
-  object-fit: fill;
+.timeline li {
+  display: grid;
+  grid-template-columns: 6.2em 1fr;
+  gap: 14px;
+  align-items: baseline;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .5s ease, transform .5s ease;
 }
-.cliff-l { left: 0; transform: scaleX(-1) translateX(var(--part, 0px)); }
-.cliff-r { right: 0; transform: translateX(var(--part, 0px)); }
-.gorge .label { position: absolute; bottom: 34%; width: clamp(88px, 10vw, 148px); }
-.label-l { left: clamp(14px, 3.5vw, 54px); }
-.label-r { right: clamp(14px, 3.5vw, 54px); }
+.timeline li.in { opacity: 1; transform: none; }
+.timeline .yr { text-align: right; font-weight: 500; font-size: clamp(14px, 1.3vw, 19px); white-space: nowrap; }
+.timeline .what b { display: block; font-weight: 500; font-size: clamp(13px, 1.25vw, 18px); }
+.timeline .what i { font-style: normal; color: var(--ink-soft); font-size: 0.9em; }
 
-.services { list-style: none; margin: 0; padding: 0 var(--gutter); text-align: center; }
+/* ---------- what she offers ------------------------------------------ */
+.services {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 46%;
+  display: grid;
+  gap: clamp(6px, 1.4vh, 18px);
+  align-content: center;
+  height: 68%;
+}
 .services li {
-  font: 400 clamp(22px, 3.4vw, 46px)/1.9 var(--display);
-  text-transform: none;
+  font: 400 clamp(19px, 2.6vw, 38px)/1.25 var(--display);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .5s ease, transform .5s ease;
 }
-.gorge .stander {
-  position: absolute;
-  bottom: 65.4%;
-  right: clamp(40px, 7vw, 120px);
-  width: clamp(72px, 8vw, 125px);
-}
+.services li.in { opacity: 1; transform: none; }
 
-/* ---------- act V: off the clock -------------------------------------- */
+/* ---------- off the clock -------------------------------------------- */
 #personal { padding: clamp(70px, 14vh, 170px) var(--gutter) clamp(180px, 26vh, 280px); }
 
 .personal-grid {
@@ -448,15 +314,17 @@ section { position: relative; }
 
 .hips { position: absolute; right: clamp(20px, 6vw, 110px); bottom: 40px; width: clamp(90px, 10vw, 156px); }
 
-.squiggle {
-  position: absolute;
-  inset: auto 0 0 0;
-  width: 100%;
-  height: auto;
-}
+.squiggle { position: absolute; inset: auto 0 0 0; width: 100%; height: auto; }
 
-/* ---------- act VI: contact -------------------------------------------- */
+/* ---------- contact --------------------------------------------------- */
 #contact { padding: clamp(80px, 16vh, 190px) var(--gutter) clamp(160px, 24vh, 250px); }
+
+.display {
+  font: 400 clamp(38px, 6vw, 86px)/0.94 var(--display);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+.display.center { text-align: center; }
 
 .contact {
   list-style: none;
@@ -473,142 +341,109 @@ section { position: relative; }
 .contact a { font-size: clamp(15px, 1.5vw, 21px); text-decoration-thickness: 1px; text-underline-offset: 4px; }
 .contact a:hover { color: var(--orange); }
 
-.pointer { position: absolute; right: clamp(20px, 6vw, 110px); bottom: 40px; width: clamp(90px, 10vw, 138px); }
+.pointer { position: absolute; right: clamp(20px, 6vw, 110px); bottom: 40px; width: clamp(90px, 10vw, 132px); }
 
-/* ---------- reveal on enter --------------------------------------------- */
 .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s ease, transform .6s ease; }
 .reveal.in { opacity: 1; transform: none; }
 
-/* ---------- narrow screens ---------------------------------------------- */
+/* ---------- narrow screens -------------------------------------------- */
 @media (max-width: 860px) {
-  #film { object-fit: contain; }
-  #hero { height: 420vh; }
-  .beat { padding-top: 84px; }
-  #surf { height: 46svh; }
-  /* A narrow screen can't crop the film sideways without losing her, so it
-     runs full width as a shallow band, the way the storyboard draws it. */
-  #surf { inset: auto 0 -26px 0; width: 100%; height: auto; }
-  #projects { height: 460svh; }
-  #projects .display { font-size: clamp(24px, 7vw, 34px); }
-  .track { top: 190px; height: 48svh; gap: 30px; padding-inline: calc((100vw - 84vw) / 2); }
-  .project { flex-basis: 84vw; grid-template-columns: 1fr; align-content: center; gap: 14px; }
-  .project img { max-height: 24vh; }
-  .btn { margin-top: 14px; }
+  /* A portrait screen cannot crop 16:9 without swallowing her whole, so the
+     film sits along the foot of the frame and the words live above it. */
+  #film { object-fit: contain; object-position: center bottom; }
+  #story { height: 820svh; }
+  .act { padding-top: 76px; }
+  .act-title b { font-size: clamp(22px, 7vw, 30px); }
+  .act-title { margin-bottom: 10px; }
+  .card {
+    grid-template-columns: 1fr;
+    top: 152px;
+    gap: 12px;
+  }
+  .card img { max-height: 30vh; }
+  .timeline { margin-top: 14px; }
+  .services { height: 46%; }
+  .card h3 { font-size: clamp(19px, 5.5vw, 26px); }
+  .btn { margin-top: 12px; }
+  .timeline { max-width: 100%; gap: 6px; }
+  .timeline li { grid-template-columns: 5.4em 1fr; gap: 10px; }
+  .services { max-width: 100%; height: 60%; }
   .personal-grid { gap: 22px; }
   .personal-intro { grid-column: 1 / -1; }
   .polaroid { grid-column: 1 / 7; }
   .polaroid-low { grid-column: 7 / -1; }
-  /* no room to read over the rock, so it becomes a banner above the list */
-  .climb { padding: 10px var(--gutter) 0; }
-  .rockface-wrap { position: static; height: 300px; overflow: hidden; }
-  .ropes { display: none; }
-  .rockface { position: relative; width: 60vw; height: 300px; }
-  .rockface .climber { right: 56%; top: 30%; width: 84px; }
-  .rockface .label { right: 10%; top: 34%; width: 108px; }
-  .gorge .cliff { width: 34vw; height: 52%; }
-  .gorge .stander { right: 7vw; bottom: 51.5%; width: 66px; }
-  .gorge .label { bottom: 24%; }
-  .services li { line-height: 1.6; }
-  .personal-grid { grid-template-columns: 1fr 1fr; }
-  .personal-intro, .personal-outro { grid-column: 1 / -1; }
-  .polaroid { grid-column: 1; }
-  .polaroid-low { grid-column: 2; }
-  .personal-outro { margin-top: 40px; }
+  .personal-outro { grid-column: 1 / -1; margin-top: 40px; }
   .hips, .pointer { position: static; margin: 40px auto 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .beat { position: static; opacity: 1; transform: none; }
-  .beats { height: auto; }
-  .reveal { opacity: 1; transform: none; transition: none; }
-  .hint { animation: none; }
-  #hero { height: auto; }
-  .hero-pin { position: static; height: auto; padding: 120px 0 60px; }
+  #story { height: auto; }
+  .stage { position: static; height: auto; padding-bottom: 40px; }
   #film { position: static; height: auto; }
-
-  /* Nothing is pinned, so the act lays itself out and the work is swipeable. */
-  #projects { height: auto; }
-  .proj-pin { position: static; height: auto; overflow: visible; }
-  #surf { position: static; height: auto; }
-  #projects .act-head { position: static; padding-bottom: 20px; }
-  .track {
+  .hero-figure, .hero-poke, .film-loading { display: none; }
+  .acts { position: static; }
+  .act {
     position: static;
-    height: auto;
-    padding-block: 24px 40px;
-    overflow-x: auto;
-    transform: none !important;
+    opacity: 1;
+    visibility: visible;
+    padding-block: clamp(30px, 6vh, 60px);
   }
+  .hint { position: static; transform: none; animation: none; display: block; }
+  .cards { display: grid; gap: 40px; }
+  .card { position: static; opacity: 1; visibility: visible; margin-block: 0; }
+  .timeline li, .services li, .reveal { opacity: 1; transform: none; transition: none; }
+  .services { height: auto; }
 }
 
-
-/* ---------- case studies -------------------------------------------- */
-.case-body {
-  max-width: 820px;
-  margin-inline: auto;
-  padding: clamp(112px, 15vh, 160px) var(--gutter) clamp(80px, 12vh, 140px);
+/* ---------- the CV, full bleed ---------------------------------------- */
+.cv-page, .cv-page body { height: 100%; }
+.cv-main {
+  display: flex;
+  flex-direction: column;
+  height: 100svh;
+  padding: 72px 0 0;
 }
+.cv-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px var(--gutter) 14px;
+}
+.cv-frame { flex: 1; width: 100%; border: 0; background: var(--rule); }
+.cv-fallback { padding: 40px var(--gutter); }
 
 .back {
   display: inline-block;
-  margin-bottom: clamp(28px, 5vh, 52px);
-  font-size: 0.95em;
   text-decoration: none;
   border-bottom: 1.5px solid transparent;
 }
 .back::before { content: "\2190\00a0"; }
 .back:hover { border-bottom-color: var(--ink); }
 
-.case-meta { margin: 0 0 14px; color: var(--ink-soft); letter-spacing: 0.02em; }
-.case-head h1 {
-  font: 400 clamp(30px, 4.6vw, 58px)/1.05 var(--display);
-  text-transform: uppercase;
-  margin-bottom: 0.45em;
+/* ---------- case studies ---------------------------------------------- */
+.case-body {
+  max-width: 1160px;
+  margin-inline: auto;
+  padding: clamp(104px, 14vh, 150px) var(--gutter) clamp(70px, 11vh, 120px);
 }
-.lede { margin: 0; font-size: clamp(17px, 1.5vw, 22px); line-height: 1.55; }
-
-.case-hero {
+.case-meta { margin: 0 0 clamp(18px, 3vh, 32px); color: var(--ink-soft); letter-spacing: 0.02em; }
+.case-sheet {
   width: 100%;
-  margin: clamp(34px, 6vh, 64px) 0 clamp(20px, 4vh, 44px);
   border-radius: 2px;
   box-shadow: 0 22px 48px -32px #4a3b2a;
 }
-
-.case-section { margin-top: clamp(38px, 6vh, 68px); }
-.case-section h2 {
-  font-size: clamp(20px, 2.1vw, 28px);
-  font-weight: 600;
-  margin-bottom: 0.6em;
-}
-.case-section p { margin: 0 0 1em; max-width: 68ch; }
-
-.case-list { margin: 0; padding: 0; list-style: none; max-width: 68ch; }
-.case-list li {
-  position: relative;
-  padding: 10px 0 10px 26px;
-  border-top: 1px solid var(--rule);
-}
-.case-list li:last-child { border-bottom: 1px solid var(--rule); }
-.case-list li::before {
-  content: "";
-  position: absolute;
-  left: 2px;
-  top: 1.15em;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--orange);
-}
-
-.case-next {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-top: clamp(56px, 9vh, 96px);
-}
-.btn-ghost {
-  background: none;
-  color: var(--ink);
-  border: 1.5px solid var(--ink);
-}
+.case-body .back { margin-bottom: clamp(24px, 4vh, 44px); }
+.case-next { display: flex; flex-wrap: wrap; gap: 14px; margin-top: clamp(40px, 7vh, 80px); }
+.btn-ghost { background: none; color: var(--ink); border: 1.5px solid var(--ink); }
 .btn-ghost:hover { background: var(--ink); color: var(--paper); }
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

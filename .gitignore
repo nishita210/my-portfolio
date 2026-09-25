@@ -20,3 +20,9 @@ scripts/wm.png
 scripts/*.txt
 
 .DS_Store
+scripts/v4/
+scripts/v5/
+scripts/v5clean/
+scripts/sheet_*.png
+scripts/fig_check.png
+scripts/v5_wm.png

@@ -3,30 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Full CV — Nishita Gupta</title>
-<meta name="description" content="Full curriculum vitae of Nishita Gupta, service and product designer.">
+<title>CV — Nishita Gupta</title>
+<meta name="description" content="Curriculum vitae of Nishita Gupta, service and product designer.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏄</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Caveat:wght@600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<style>
-  .cv { max-width: 980px; margin: 0 auto; padding: 130px var(--gutter) 120px; display: grid; gap: 34px; }
-  .cv img { box-shadow: 0 20px 50px -34px #4a3b2a; }
-</style>
 </head>
-<body>
+<body class="cv-page">
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+
 <header class="nav">
   <a class="nav-name" href="index.html">Nishita Gupta</a>
   <nav>
-    <a href="index.html">Home</a>
-    <a href="index.html#projects">Projects</a>
-    <a href="cv.html">Full CV</a>
+    <a href="index.html#projects-list">Projects</a>
+    <a href="index.html#contact">Contact</a>
+    <a href="cv.html" aria-current="page">CV</a>
   </nav>
 </header>
-<main class="cv">
-  <h1 class="display">Full CV</h1>
-  <img src="assets/cv-1.webp" alt="Curriculum vitae, page one" width="1200" height="1697">
-  <img src="assets/cv-2.webp" alt="Curriculum vitae, page two" width="1200" height="1697">
+
+<main class="cv-main">
+  <div class="cv-bar">
+    <a class="back" href="index.html">Back</a>
+    <a class="btn" href="cv/nishita-gupta-cv.pdf" download="Nishita-Gupta-CV.pdf">Download CV</a>
+  </div>
+  <!-- The PDF itself, so it stays sharp at any zoom and prints properly. -->
+  <object class="cv-frame" data="cv/nishita-gupta-cv.pdf#view=FitH" type="application/pdf">
+    <p class="cv-fallback">
+      Your browser will not display the PDF inline.
+      <a href="cv/nishita-gupta-cv.pdf" download="Nishita-Gupta-CV.pdf">Download the CV</a> instead.
+    </p>
+  </object>
 </main>
+<script type="module" src="cursor.js"></script>
 </body>
 </html>
