@@ -272,6 +272,10 @@ a { color: inherit; }
 .services li.in { opacity: 1; transform: none; }
 
 /* ---------- off the clock -------------------------------------------- */
+/* These sections park a figure and the ink line against their own bottom
+   edge, so they have to be the positioning context for them. */
+#personal, #contact { position: relative; }
+
 #personal { padding: clamp(70px, 14vh, 170px) var(--gutter) clamp(180px, 26vh, 280px); }
 
 .personal-grid {

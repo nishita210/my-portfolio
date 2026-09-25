@@ -52,7 +52,8 @@ zoom and prints properly, with a download button beside the back link.
 ## Regenerating
 
 ```bash
-python3 scripts/prep_story.py     # video frames -> scripts/v5clean/
+ffmpeg -i Create_animated_*.mp4 -vsync 0 scripts/v5/f%03d.png
+python3 scripts/prep_story.py     # warms the paper -> scripts/v5clean/
 python3 scripts/extract.py        # storyboard PNGs -> site/assets/*.png
 ./scripts/encode.sh               # everything -> webp
 python3 scripts/build_projects.py # case-study pages
@@ -81,3 +82,7 @@ Every path in the site is relative, so it serves correctly from the
   stretch with neither cliff in frame — the camera hands off directly from one
   to the other — so the ride is timed to keep it to a sliver at the right rather
   than out of shot entirely.
+- **The opening shows one cliff, not two.** The take starts tight on the left
+  cliff; the right one only enters at frame 37, by which point she has already
+  jumped. Both cliffs cannot be in the first still without footage that holds
+  them together, or a composited opening frame.
