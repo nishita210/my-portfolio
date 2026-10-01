@@ -9,8 +9,9 @@
   --orange:  #e8622a;
   --rule:    #ddd2bb;
 
-  --gutter: clamp(20px, 5vw, 96px);
-  --wide:   1240px;
+  /* The storyboard's margins: 112px either side of a 1440 frame. */
+  --gutter: clamp(20px, 7.78vw, 160px);
+  --wide:   1440px;
   --display: "Alfa Slab One", Georgia, serif;
   --body:    "Poppins", system-ui, sans-serif;
   --hand:    "Caveat", cursive;
@@ -78,7 +79,7 @@ a { color: inherit; }
   justify-content: space-between;
   align-items: center;
   gap: 24px;
-  padding: 18px var(--gutter);
+  padding: clamp(16px, 2.7vw, 40px) var(--gutter) 18px;
   background: linear-gradient(var(--paper) 55%, transparent);
 }
 .nav-name { font-weight: 500; text-decoration: none; letter-spacing: 0.01em; }
@@ -99,12 +100,20 @@ a { color: inherit; }
   height: 100svh;
   overflow: hidden;
 }
+/* The film is fitted to the width and stood on the foot of the screen, as
+   the storyboard frames are: both cliffs whole, open paper above them for
+   the words. Only a screen wider than the film itself crops it, top and
+   bottom, so the paper never runs out at the sides. */
 #film {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center bottom;
+}
+@media (min-aspect-ratio: 16/9) {
+  #film { object-fit: cover; }
 }
 .film-loading {
   position: absolute;
@@ -117,19 +126,9 @@ a { color: inherit; }
 }
 .film-loading[hidden] { display: block; opacity: 0; pointer-events: none; }
 
-/* The wide opening frame, dissolving into the tighter take beneath it. */
-.opening {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform-origin: 0 0;       /* the registration maths assumes this */
-  will-change: opacity, transform;
-}
-
-/* She is drawn once more as this cut-out, sitting exactly on top of the
-   opening frame, so she can react without the scene moving. */
+/* She is lifted out of the film's first frame as this cut-out, sitting
+   exactly where she was painted out, so she can react without the scene
+   moving with her. */
 .hero-figure {
   position: absolute;
   transform-origin: 50% 100%;
@@ -153,7 +152,7 @@ a { color: inherit; }
 .act {
   position: absolute;
   inset: 0;
-  padding: clamp(84px, 12vh, 124px) var(--gutter) 0;
+  padding: clamp(84px, 14.3vh, 160px) var(--gutter) 0;
   opacity: 0;
   visibility: hidden;
   transition: opacity .45s ease;
@@ -194,12 +193,12 @@ a { color: inherit; }
   position: absolute;
   left: var(--gutter);
   right: var(--gutter);
-  top: clamp(140px, 20vh, 200px);
-  max-width: min(var(--wide), 1010px);
+  top: 33.5vh;
+  max-width: var(--wide);
   margin-inline: auto;
   display: grid;
-  grid-template-columns: minmax(150px, 4fr) 7fr;
-  gap: clamp(20px, 3.5vw, 56px);
+  grid-template-columns: minmax(150px, 1fr) 62.4%;
+  gap: clamp(20px, 3.4vw, 49px);
   align-items: start;
   opacity: 0;
   visibility: hidden;
@@ -218,7 +217,8 @@ a { color: inherit; }
 .meta { margin: 0; color: var(--ink-soft); font-size: 0.95em; }
 .card img {
   width: 100%;
-  max-height: min(37vh, 330px);
+  aspect-ratio: 759 / 386;
+  max-height: 37.7vh;
   object-fit: cover;
   border-radius: 2px;
   box-shadow: 0 18px 40px -28px #4a3b2a;
@@ -243,14 +243,14 @@ a { color: inherit; }
   list-style: none;
   margin: clamp(22px, 4vh, 44px) 0 0;
   padding: 0;
-  max-width: min(54%, 620px);
+  max-width: min(46%, 560px);
   display: grid;
-  gap: clamp(8px, 1.5vh, 18px);
+  gap: clamp(4px, 0.9vh, 12px);
 }
 .timeline li {
   display: grid;
-  grid-template-columns: 6.2em 1fr;
-  gap: 14px;
+  grid-template-columns: 4.6em 1fr;
+  gap: 1.1em;
   align-items: baseline;
   opacity: 0;
   transform: translateY(18px);
@@ -266,11 +266,11 @@ a { color: inherit; }
   list-style: none;
   margin: 0;
   padding: 0;
+  margin: calc(17vh - clamp(84px, 14.3vh, 160px)) auto 0;
   max-width: 46%;
   display: grid;
   gap: clamp(6px, 1.4vh, 18px);
-  align-content: center;
-  height: 68%;
+  text-align: center;
 }
 .services li {
   font: 400 clamp(19px, 2.6vw, 38px)/1.25 var(--display);
@@ -325,7 +325,11 @@ a { color: inherit; }
 }
 .personal-outro b { font-size: 1.25em; font-weight: 600; }
 
-.hips { position: absolute; right: clamp(20px, 6vw, 110px); bottom: 40px; width: clamp(90px, 10vw, 156px); }
+/* She stands on the ink line, as in the storyboard. The line is the full
+   width of the page, so it scales with vw; her feet are pinned to it in the
+   same units — the line's top sits 39/1440 of the width above its foot. */
+.hips, .pointer { position: absolute; bottom: calc(100vw * 39 / 1440); }
+.hips { right: calc(100vw * 22 / 1440); width: max(80px, calc(100vw * 156 / 1440)); }
 
 .squiggle { position: absolute; inset: auto 0 0 0; width: 100%; height: auto; }
 
@@ -354,16 +358,13 @@ a { color: inherit; }
 .contact a { font-size: clamp(15px, 1.5vw, 21px); text-decoration-thickness: 1px; text-underline-offset: 4px; }
 .contact a:hover { color: var(--orange); }
 
-.pointer { position: absolute; right: clamp(20px, 6vw, 110px); bottom: 40px; width: clamp(90px, 10vw, 132px); }
+.pointer { right: calc(100vw * 30 / 1440); width: max(72px, calc(100vw * 138 / 1440)); }
 
 .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s ease, transform .6s ease; }
 .reveal.in { opacity: 1; transform: none; }
 
 /* ---------- narrow screens -------------------------------------------- */
 @media (max-width: 860px) {
-  /* A portrait screen cannot crop 16:9 without swallowing her whole, so the
-     film sits along the foot of the frame and the words live above it. */
-  #film, .opening { object-fit: contain; object-position: center bottom; }
   #story { height: 820svh; }
   .act { padding-top: 76px; }
   .act-title b { font-size: clamp(22px, 7vw, 30px); }
@@ -375,18 +376,16 @@ a { color: inherit; }
   }
   .card img { max-height: 30vh; }
   .timeline { margin-top: 14px; }
-  .services { height: 46%; }
   .card h3 { font-size: clamp(19px, 5.5vw, 26px); }
   .btn { margin-top: 12px; }
   .timeline { max-width: 100%; gap: 6px; }
   .timeline li { grid-template-columns: 5.4em 1fr; gap: 10px; }
-  .services { max-width: 100%; height: 60%; }
+  .services { max-width: 100%; }
   .personal-grid { gap: 22px; }
   .personal-intro { grid-column: 1 / -1; }
   .polaroid { grid-column: 1 / 7; }
   .polaroid-low { grid-column: 7 / -1; }
   .personal-outro { grid-column: 1 / -1; margin-top: 40px; }
-  .hips, .pointer { position: static; margin: 40px auto 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -406,7 +405,6 @@ a { color: inherit; }
   .cards { display: grid; gap: 40px; }
   .card { position: static; opacity: 1; visibility: visible; margin-block: 0; }
   .timeline li, .services li, .reveal { opacity: 1; transform: none; transition: none; }
-  .services { height: auto; }
 }
 
 /* ---------- the CV, full bleed ---------------------------------------- */

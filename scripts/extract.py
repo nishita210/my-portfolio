@@ -13,12 +13,14 @@ import io
 import os
 import re
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIG = "/Users/kartikey.gupta/Downloads/Portfolio 2026 (2)"
 OUT = os.path.join(ROOT, "site", "assets")
 KEY_FLOOR, KEY_CEIL = 4, 12      # channel distance: fully clear .. fully opaque
+FIGURE_PAPER, FIGURE_RAMP = 232, 40   # darkest channel: paper above 232, ink by 192
+SITE_PAPER = np.array([250, 242, 226])  # --paper in style.css
 
 os.makedirs(OUT, exist_ok=True)
 
@@ -42,6 +44,30 @@ def key_cream(rgb, paper=None):
     return np.dstack([rgb, alpha]).astype(np.uint8)
 
 
+def key_figure(rgb, paper):
+    """Key only the paper around her. The paper under the closing scenes is
+    blotchy, so 'paper' here is anything near-white rather than one colour;
+    and since the highlights on her legs are just as pale, only near-white
+    reachable from the edge of the box is cleared — whatever her outline
+    encloses stays solid."""
+    lightest = rgb.min(axis=2).astype(np.float64)
+    alpha = np.clip((FIGURE_PAPER - lightest) / FIGURE_RAMP, 0, 1)
+    clear = Image.fromarray(np.where(alpha < 1, 255, 0).astype(np.uint8)).copy()
+    w, h = clear.size
+    edge = [(x, y) for x in range(w) for y in (0, h - 1)] + [(x, y) for y in range(h) for x in (0, w - 1)]
+    for xy in edge:
+        if clear.getpixel(xy) == 255:
+            ImageDraw.floodfill(clear, xy, 128)
+    outside = np.asarray(clear) == 128
+    # Enclosed near-white is the frame's paper showing through her; tint it
+    # to the page's paper so it doesn't read as white specks at her ankles.
+    inside = (~outside)[:, :, None]
+    tinted = rgb * alpha[:, :, None] + SITE_PAPER * (1 - alpha[:, :, None])
+    rgb = np.where(inside, tinted, rgb)
+    alpha = np.where(outside, alpha, 1.0)
+    return np.dstack([rgb, alpha * 255]).astype(np.uint8)
+
+
 def key_white(rgb):
     """Keep only the white chalk lettering, drop the cliff behind it."""
     lum = rgb.mean(axis=2)
@@ -62,11 +88,34 @@ def cut(name, src, box, keyer=key_cream, do_trim=True):
     x0, y0, x1, y1 = box
     full = frame(src)
     patch = full[y0:y1, x0:x1]
-    rgba = keyer(patch, paper_of(full)) if keyer is key_cream else keyer(patch)
+    rgba = keyer(patch, paper_of(full)) if keyer in (key_cream, key_figure) else keyer(patch)
     if do_trim:
         rgba = trim(rgba)
     Image.fromarray(rgba).save(f"{OUT}/{name}.png")
     print(f"{name:14} {rgba.shape[1]}x{rgba.shape[0]}")
+
+
+def only_orange(name, from_row):
+    """From `from_row` down, keep only her orange — drop the frame's ink line."""
+    path = f"{OUT}/{name}.png"
+    rgba = np.asarray(Image.open(path).convert("RGBA")).copy()
+    band = rgba[from_row:].astype(np.int16)
+    orange = (band[:, :, 0] - band[:, :, 2]) > 60
+    rgba[from_row:, :, 3] = np.where(orange, rgba[from_row:, :, 3], 0)
+    Image.fromarray(rgba).save(path)
+
+
+def erase(name, box):
+    """Clear a rectangle (x0, y0, x1, y1, in the asset's own pixels) to transparent."""
+    path = f"{OUT}/{name}.png"
+    rgba = np.asarray(Image.open(path).convert("RGBA")).copy()
+    x0, y0, x1, y1 = box
+    rgba[y0:y1, x0:x1, 3] = 0
+    # Her soles rest on the line itself; drop any of her orange left below.
+    band = rgba[:, x0:x1].astype(np.int16)
+    orange = (band[:, :, 0] - band[:, :, 2]) > 40
+    rgba[:, x0:x1, 3] = np.where(orange, 0, rgba[:, x0:x1, 3])
+    Image.fromarray(rgba).save(path)
 
 
 # --- the cliff and its chalk labels ---------------------------------------
@@ -79,11 +128,17 @@ cut("label-offer", 4, (1180, 520, 1420, 660), keyer=key_white)
 cut("pose-stand", 19, (1150, 225, 1275, 401))     # on the cliff, board in hand
 cut("pose-surf", 8, (120, 715, 340, 900))
 cut("pose-climb", 15, (1118, 548, 1262, 785))
-cut("pose-point", 21, (1272, 720, 1410, 958))
+cut("pose-point", 21, (1272, 720, 1410, 959), keyer=key_figure, do_trim=False)   # down to the soles
 
 # --- closing scene ---------------------------------------------------------
-cut("pose-hips", 20, (1262, 738, 1418, 962))
+cut("pose-hips", 20, (1262, 738, 1418, 963), keyer=key_figure, do_trim=False)     # down to the soles
+# Her soles share their last row with frame 20's own ink line; keep only the
+# shoes there, so the page's line is what she stands on.
+only_orange("pose-hips", 962 - 738)
 cut("squiggle", 21, (0, 946, 1440, 1000), do_trim=False)
+# The strip runs through the pointing pose's feet; take them out above the
+# line, or a second pair of feet stands beside her on every screen it's used.
+erase("squiggle", (1292, 0, 1376, 959 - 946))
 
 
 # --- a seamless wave tile --------------------------------------------------

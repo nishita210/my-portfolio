@@ -13,33 +13,37 @@ drop it on Netlify, Vercel, GitHub Pages or any static host as-is.
 
 ## The film
 
-`site/story/s001–s192.webp` is `Create_animated_surfing_characte….mp4`, one take:
-stand on the left cliff, dive, land on the board, ride right, reach the far
-cliff, climb it, stand on top. The paper it was rendered on is cooler than the
-site's, so the frames are warmed to match.
+`site/story/s001–s192.webp` is `Firefly Create one continuous 2D hand-drawn
+animation….mp4`, one take that follows the storyboard: wave from the left cliff,
+dive, ride the open water, reach the far cliff, climb it, stand on top. It opens
+and closes on the storyboard's own framing — both cliffs whole — so the page
+starts straight on the film.
 
-Scroll does not run it at a constant rate. The cliffs enter and leave on the
-footage's own schedule — measured, the left one is clear of frame by 91 and the
-far one closes in from 121 — so `CUES` in `main.js` stretches the ride over the
-open water between them and plays the rest through briskly. The four acts hang
-off that same scroll position:
+Scroll does not run it at a constant rate. Measured, both cliffs are gone by
+frame 55, the water is open until 88, the far cliff is solid by 112 and the near
+one back by 136. `CUES` in `main.js` holds each act over the stretch of film that
+leaves it room, and plays the rest through briskly:
 
-| Act | Scroll | What the words do |
-|---|---|---|
-| hero | 0.00–0.075 | one line, "scroll to explore" |
-| projects | 0.335–0.578 | six cards, one on screen at a time |
-| skills | 0.745–0.885 | heading holds, years arrive one by one |
-| services | 0.915–1.00 | the four offers arrive one by one |
+| Act | Scroll | Frames | What the words do |
+|---|---|---|---|
+| hero | 0.000–0.075 | 1–20 | one line, "scroll to explore" |
+| projects | 0.225–0.555 | 56–80 | six cards, one on screen at a time |
+| skills | 0.640–0.800 | 96–111 | heading holds, years arrive one by one |
+| services | 0.895–1.000 | 162–192 | the four offers arrive one by one |
 
-Personal and contact follow in ordinary flow once the film is done.
+Between whole frames the canvas dissolves from one to the next, so a slow
+stretch of scroll glides rather than steps; once scrolling stops it lands on the
+nearest whole frame, so nothing rests double-exposed.
 
-The page opens on `assets/opening.webp` — storyboard frame 2, the only framing
-with both cliffs and her standing — and dissolves into the film on the first
-stretch of scroll, walking the still onto the film's framing as it goes.
+The film is fitted to the width and stood on the foot of the screen, like the
+storyboard frames, with paper above for the words. Only a screen wider than 16:9
+crops it (top and bottom). Margins follow the storyboard: 112px either side of a
+1440 frame (`--gutter`), headings 146px down, the project image spanning
+569–1328px.
 
-Hovering the surfer makes her react: she is drawn twice, once in the opening
-frame and once as a cut-out (`assets/hero-figure.webp`) sitting exactly on top
-of it, so she can move without the scene moving with her.
+Hovering the surfer makes her react. `prep_story.py` lifts her out of frame 1 as
+`assets/hero-figure.webp` and paints her out of `s001`, so the cut-out can move
+without a second copy underneath; from frame 2 the film draws her again.
 
 ## Case studies
 
@@ -56,8 +60,8 @@ zoom and prints properly, with a download button beside the back link.
 ## Regenerating
 
 ```bash
-ffmpeg -i Create_animated_*.mp4 -vsync 0 scripts/v5/f%03d.png
-python3 scripts/prep_story.py     # warms the paper -> scripts/v5clean/
+ffmpeg -i Firefly*.mp4 -vsync 0 scripts/v6/f%03d.png
+python3 scripts/prep_story.py     # warms the paper, cuts her out of frame 1 -> scripts/v6clean/
 python3 scripts/extract.py        # storyboard PNGs -> site/assets/*.png
 ./scripts/encode.sh               # everything -> webp
 python3 scripts/build_projects.py # case-study pages
@@ -82,14 +86,6 @@ Every path in the site is relative, so it serves correctly from the
   real typefaces were not recoverable. The site uses Alfa Slab One (display),
   Poppins (body) and Caveat (handwriting). Swap the `<link>` and the
   `--display` / `--body` / `--hand` variables in `style.css`.
-- **The far cliff is visible during the last projects.** The footage has no
-  stretch with neither cliff in frame — the camera hands off directly from one
-  to the other — so the ride is timed to keep it to a sliver at the right rather
-  than out of shot entirely.
-- **The opening is a still, not the film.** The take starts tight on the left
-  cliff — the right one only enters at frame 37, by which point she has already
-  jumped — so the page opens on storyboard frame 2, which holds both cliffs
-  together, and dissolves into the film over the first 360px of scroll. The two
-  are different drawings of the same scene, so the crossover is registered on
-  shared landmarks (the left cliff's top corner and the waterline below it) but
-  cannot overlap exactly.
+- **Skills sit over the approach, not the climb.** The near cliff comes back
+  while she climbs, right where the list belongs, so the years arrive while she
+  rides toward the far cliff and the climb itself plays without words.

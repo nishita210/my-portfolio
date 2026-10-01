@@ -6,7 +6,7 @@ cd "$(dirname "$0")/.."
 # The film: one frame per frame of the take, 1200px wide.
 mkdir -p site/story
 n=0
-for f in scripts/v5clean/f*.png; do
+for f in scripts/v6clean/f*.png; do
   n=$((n + 1))
   cwebp -quiet -q 70 -resize 1200 0 "$f" -o "$(printf 'site/story/s%03d.webp' "$n")"
 done
