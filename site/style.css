@@ -40,7 +40,7 @@ a { color: inherit; }
   border-radius: 2px;
 }
 
-.anchor { position: relative; top: -80px; }
+.anchor { position: absolute; top: 0; left: 0; }
 
 /* ---------- the cursor --------------------------------------------- */
 /* A white disc in difference blend: whatever it passes over reads inverted
@@ -92,7 +92,7 @@ a { color: inherit; }
 .nav nav a:hover { border-bottom-color: var(--ink); }
 
 /* ---------- the film ------------------------------------------------ */
-#story { height: 1100svh; }
+#story { position: relative; height: 1100svh; }
 
 .stage {
   position: sticky;

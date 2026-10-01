@@ -40,6 +40,10 @@ const ACTS = {
   services: [0.895, 1.000],
 };
 
+/* Where "Projects" lands: just inside the projects act, so she is riding the
+   waves and the first project is the one on screen. */
+const PROJECTS_LANDING = ACTS.projects[0] + 0.01;
+
 /** Scroll position -> frame, through the cue points above. */
 function frameAt(p) {
   for (let i = 1; i < CUES.length; i++) {
@@ -208,6 +212,19 @@ function startStory() {
 
   placeFigure();
   addEventListener("resize", placeFigure);
+
+  /* Park the "Projects" anchor at that point of the scroll. A link from
+     another page arrives before it is parked, so land it again once it is. */
+  const landing = document.getElementById("projects-list");
+  function parkLanding() {
+    if (!landing || REDUCED) return;
+    landing.style.top = `${(story.offsetHeight - innerHeight) * PROJECTS_LANDING}px`;
+  }
+  parkLanding();
+  addEventListener("resize", parkLanding);
+  if (landing && location.hash === "#projects-list") {
+    landing.scrollIntoView({ behavior: "instant" });
+  }
 
   if (REDUCED) {
     acts.forEach((a) => a.classList.add("on"));

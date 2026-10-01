@@ -52,6 +52,11 @@ painter, adventurer; "What I offer" becomes service, UI UX and product design.
 and chalks the storyboard's list on (`assets/cliff-am.webp`, `cliff-offer.webp`),
 so only the lettering changes. A tap toggles it on touch screens.
 
+"Projects" — in the nav, and the back links on the case studies — lands just
+inside the projects act (`PROJECTS_LANDING` in `main.js`), with her riding the
+waves and the first project on screen: the `#projects-list` anchor is parked at
+that point of the scroll.
+
 ## Case studies
 
 `gas-station`, `aviation`, `healthcare`, `agri-tech`, `retrofit`, `tourism.html`,

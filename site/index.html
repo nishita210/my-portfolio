@@ -28,6 +28,9 @@
   <!-- One take, start to finish: the cliff, the dive, the ride, the climb.
        Scroll scrubs the film; every caption is laid over it. -->
   <section id="story" aria-label="Introduction">
+    <!-- "Projects" lands here: main.js parks it at the point in the scroll
+         where she is riding the waves and the first project is up. -->
+    <div id="projects-list" class="anchor" aria-hidden="true"></div>
     <div class="stage">
       <canvas id="film" width="1200" height="675" role="img"
               aria-label="A surfer waves from a cliff marked What I am, across the water from a second cliff marked What I offer"></canvas>
@@ -138,9 +141,6 @@
       </div>
     </div>
   </section>
-
-  <!-- A plain anchor so the nav can jump past the film to the work. -->
-  <div id="projects-list" class="anchor" aria-hidden="true"></div>
 
   <section id="personal" aria-label="Outside work">
     <div class="personal-grid">
