@@ -162,25 +162,36 @@ function startStory() {
   const figure = document.getElementById("heroFigure");
   const poke = document.getElementById("heroPoke");
 
+  const cliffs = [
+    // Each relettered label is a patch of frame 1; these are where (from prep_story.py).
+    [document.getElementById("cliffAm"),    { x: 0.0422, y: 0.4472, w: 0.1547, h: 0.2972 }],
+    [document.getElementById("cliffOffer"), { x: 0.8016, y: 0.4694, w: 0.1734, h: 0.2167 }],
+  ].filter(([el]) => el);
+
   // The cut-out sits exactly where she was painted out of frame 1.
   const FIG = { x: 0.1602, y: 0.0611, w: 0.1953, h: 0.3056 };
 
-  function placeFigure() {
-    if (!figure) return;
+  /** Lay `el` over the film at a box given as fractions of the frame. */
+  function pin(el, box, withHeight = true) {
     const m = mediaToScreen(canvas, canvas.width, canvas.height);
-    const x = m.left + FIG.x * canvas.width * m.s;
-    const y = m.top + FIG.y * canvas.height * m.s;
-    const w = FIG.w * canvas.width * m.s;
-    const h = FIG.h * canvas.height * m.s;
-    figure.style.left = `${x}px`;
-    figure.style.top = `${y}px`;
-    figure.style.width = `${w}px`;
-    if (poke) {
-      poke.style.left = `${x}px`;
-      poke.style.top = `${y}px`;
-      poke.style.width = `${w}px`;
-      poke.style.height = `${h}px`;
-    }
+    el.style.left = `${m.left + box.x * canvas.width * m.s}px`;
+    el.style.top = `${m.top + box.y * canvas.height * m.s}px`;
+    el.style.width = `${box.w * canvas.width * m.s}px`;
+    if (withHeight) el.style.height = `${box.h * canvas.height * m.s}px`;
+  }
+
+  function placeFigure() {
+    if (figure) pin(figure, FIG, false);
+    if (poke) pin(poke, FIG);
+    for (const [el, box] of cliffs) pin(el, box);
+  }
+
+  // A tap on a touch screen has no hover to end it, so it toggles instead.
+  for (const [el] of cliffs) {
+    el.addEventListener("click", () => el.classList.toggle("on"));
+    el.addEventListener("pointerleave", (e) => {
+      if (e.pointerType === "mouse") el.classList.remove("on");
+    });
   }
 
   if (poke && figure) {
@@ -215,6 +226,11 @@ function startStory() {
     const handover = Math.round(clamp01(frame - 1) * BLEND_STEPS) / BLEND_STEPS;
     if (figure) figure.style.opacity = String(1 - handover);
     if (poke) poke.hidden = handover > 0;
+    // The lists are lettered onto frame 1, so they only belong there too.
+    for (const [el] of cliffs) {
+      el.hidden = handover > 0;
+      if (el.hidden) el.classList.remove("on");
+    }
   }
 
   /** Reveal a list one item at a time across its act. */

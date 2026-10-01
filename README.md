@@ -45,6 +45,13 @@ Hovering the surfer makes her react. `prep_story.py` lifts her out of frame 1 as
 `assets/hero-figure.webp` and paints her out of `s001`, so the cut-out can move
 without a second copy underneath; from frame 2 the film draws her again.
 
+Hovering either cliff on the opening frame rewrites its chalk label as a list,
+as storyboard frames 1a and 1b do — "What I am" becomes designer, traveller,
+painter, adventurer; "What I offer" becomes service, UI UX and product design.
+`prep_story.py` paints the old label out of frame 1 in the cliff's own colour
+and chalks the storyboard's list on (`assets/cliff-am.webp`, `cliff-offer.webp`),
+so only the lettering changes. A tap toggles it on touch screens.
+
 ## Case studies
 
 `gas-station`, `aviation`, `healthcare`, `agri-tech`, `retrofit`, `tourism.html`,

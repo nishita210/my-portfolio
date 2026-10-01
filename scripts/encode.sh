@@ -19,6 +19,10 @@ done
 for f in site/assets/photo-*.png; do
   cwebp -quiet -q 80 -resize 700 0 "$f" -o "${f%.png}.webp" && rm "$f"
 done
+# The cliffs' hover lists are opaque patches of frame 1.
+for f in site/assets/cliff-*.png; do
+  cwebp -quiet -q 88 "$f" -o "${f%.png}.webp" && rm "$f"
+done
 # Cut-outs keep their alpha.
 for f in site/assets/pose-*.png site/assets/squiggle.png site/assets/hero-figure.png; do
   [ -f "$f" ] || continue

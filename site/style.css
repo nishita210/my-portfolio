@@ -146,6 +146,14 @@ a { color: inherit; }
 .hero-poke { position: absolute; margin: 0; padding: 0; border: 0; background: none; }
 .hero-poke[hidden] { display: none; }
 
+/* The cliffs' labels, relettered as lists on hover, focus or tap. */
+.cliff-list { position: absolute; margin: 0; padding: 0; border: 0; background: none; }
+.cliff-list[hidden] { display: none; }
+.cliff-list img { width: 100%; height: 100%; opacity: 0; transition: opacity .35s ease; }
+.cliff-list:hover img,
+.cliff-list:focus-visible img,
+.cliff-list.on img { opacity: 1; }
+
 /* ---------- the captions -------------------------------------------- */
 .acts { position: absolute; inset: 0; pointer-events: none; }
 
@@ -393,7 +401,7 @@ a { color: inherit; }
   #story { height: auto; }
   .stage { position: static; height: auto; padding-bottom: 40px; }
   #film { position: static; height: auto; }
-  .hero-figure, .hero-poke, .film-loading { display: none; }
+  .hero-figure, .hero-poke, .cliff-list, .film-loading { display: none; }
   .acts { position: static; }
   .act {
     position: static;
